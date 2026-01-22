@@ -1,11 +1,10 @@
 window.URLS = {
-   
-    "MVMT_INCHARGE_VIEW": "https://www.google.com/",
-    "MVMT_INCHARGE_PDF": "https://www.google.com/",
-    "MVMT_PANCHAYAT_VIEW": "https://www.google.com/",
-    "MVMT_PANCHAYAT_PDF": "https://www.google.com/",
-    "MVMT_CEMENT_VIEW": "https://www.google.com/",
-    "MVMT_CEMENT_PDF": "https://www.google.com/"
+
+   //Featured
+    "NIC_Mail": "https://accounts.mgovcloud.in/",
+    "TNRD": "https://tnrd.tn.gov.in/project/home.php",
+    "Karuvoolam": "https://www.karuvoolam.tn.gov.in/web/tnta/",
+    "WhatsApp": "https://web.whatsapp.com/",
 };
 
 // keep for future extension
