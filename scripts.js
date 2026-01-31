@@ -220,3 +220,19 @@ document.addEventListener('DOMContentLoaded', () => {
     resize();
     animate();
 })();
+
+// Global search filter — filters visible cards by title or data-url-key
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('globalSearch');
+    if (!searchInput) return;
+    searchInput.addEventListener('input', function() {
+        const q = this.value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const title = (card.querySelector('.card-title') && card.querySelector('.card-title').textContent || '').toLowerCase();
+            const key = (card.getAttribute('data-url-key') || '').toLowerCase();
+            const match = !q || title.includes(q) || key.includes(q);
+            card.style.display = match ? '' : 'none';
+        });
+    });
+});
