@@ -234,5 +234,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const match = !q || title.includes(q) || key.includes(q);
             card.style.display = match ? '' : 'none';
         });
+
+        // Hide sections that don't have any visible cards
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            const hasVisible = Array.from(section.querySelectorAll('.card')).some(card => card.style.display !== 'none');
+            section.style.display = hasVisible ? '' : 'none';
+        });
     });
 });
