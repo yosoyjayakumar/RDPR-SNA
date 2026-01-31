@@ -228,8 +228,8 @@ h1 {
 /* Card grid styles */
 .card-grid {
     display: grid;
-    /* Use auto-fill with a smaller min width so more cards fit per row */
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    /* Use auto-fill with a slightly larger min width so cards are a bit bigger */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 14px;
     margin-top: 1.5rem;
     align-items: start;
@@ -267,8 +267,8 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60%;
-    height: 60%;
+    width: 75%;
+    height: 75%;
     object-fit: contain;
     pointer-events: none;
 }
