@@ -15,6 +15,15 @@ window.URLS = {
     "MI Tank": "https://tnagamt.indianbank.bank.in/select-scheme",
     "NABARD": "https://drdasna.rbl.bank.in/login",
 
+    //A4
+    "GST": "https://services.gst.gov.in/services/login",
+    "IT": "https://www.incometax.gov.in/iec/foportal/",
+    "Cams": "https://cams.tn.gov.in/",
+    
+
+    //A5
+    "ooratchimani": "https://ooratchimani.org/#/login-link",
+
 };
 
 // keep for future extension
