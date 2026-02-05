@@ -6,6 +6,8 @@ window.URLS = {
     "Karuvoolam": "https://www.karuvoolam.tn.gov.in/web/tnta/",
     "WhatsApp": "https://web.whatsapp.com/",
     "IPMS": "https://ipms.tnrd.tn.gov.in/login.php",
+    "IlovePDF": "https://www.ilovepdf.com/",
+    "PDF.io": "https://pdf.io/",
 
     //A2
     "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob",
