@@ -24,6 +24,7 @@ window.URLS = {
     
 
     //A5
+    "Zoho": "https://www.zoho.com/desk/login.html",
     "ooratchimani": "https://ooratchimani.org/#/login-link",
 
 };
