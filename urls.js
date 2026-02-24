@@ -13,7 +13,7 @@ window.URLS = {
     "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob",
     "MLACDS": "https://tnrdmlacds.iob.bank.in/login",
     "NNT": "https://tnrdnnt.iob.bank.in/login",
-    "MPLADS": "https://mplads.sbi/digigov/Login.zul",
+    "MPLADS": "hhttps://mplads.mospi.gov.in/digigov/Login.zul",
     "MI Tank": "https://tnagamt.indianbank.bank.in/select-scheme",
     "NABARD": "https://drdasna.rbl.bank.in/login",
 
