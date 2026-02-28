@@ -105,7 +105,25 @@ document.addEventListener('DOMContentLoaded', () => {
             el.dataset.url = url;
         }
     });
+    updateVisitCount();
 });
+
+// Function to fetch and display page visit count
+function updateVisitCount() {
+    const counterElement = document.getElementById('visit-count');
+    if (!counterElement) return;
+
+    // Using counterapi.dev to track visits. 
+    // Namespace 'rdrp-sna' matches the project name.
+    fetch('https://api.counterapi.dev/v2/rdrp-sna/pagess/up')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.count) {
+                counterElement.textContent = data.count;
+            }
+        })
+        .catch(err => console.error('Visit counter failed:', err));
+}
 
 // Interactive atom dots background
 (function(){

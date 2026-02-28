@@ -387,3 +387,13 @@ h1 {
 @media (max-width: 480px) {
     .search-input { padding: 10px 12px; font-size: 0.95rem; }
 }
+
+.footer-counter {
+    margin-top: 2rem;
+    padding: 1rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
