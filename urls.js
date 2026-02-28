@@ -9,11 +9,14 @@ window.URLS = {
     "IlovePDF": "https://www.ilovepdf.com/",
     "PDF.io": "https://pdf.io/",
 
+    //Scheme Side
+    "AGAMT": "https://tnagamt.indianbank.bank.in/select-scheme",
+
     //A2
-    "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob",
+    "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob.bank.in/login",
     "MLACDS": "https://tnrdmlacds.iob.bank.in/login",
     "NNT": "https://tnrdnnt.iob.bank.in/login",
-    "MPLADS": "hhttps://mplads.mospi.gov.in/digigov/Login.zul",
+    "MPLADS": "https://mplads.mospi.gov.in/digigov/Login.zul",
     "MI Tank": "https://tnagamt.indianbank.bank.in/select-scheme",
     "NABARD": "https://drdasna.rbl.bank.in/login",
 
