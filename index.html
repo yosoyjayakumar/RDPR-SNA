@@ -169,5 +169,17 @@
     </div>
     <script src="urls.js"></script>
     <script src="scripts.js"></script>
+    <script>
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'visible') {
+                window.location.reload();
+            }
+        });
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 </html>

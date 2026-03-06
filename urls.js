@@ -11,6 +11,8 @@ window.URLS = {
 
     //Scheme Side
     "AGAMT": "https://tnagamt.indianbank.bank.in/select-scheme",
+    "VPTAX": "#",
+    "TNPASS": "#",
 
     //A2
     "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob.bank.in/login",
@@ -31,6 +33,3 @@ window.URLS = {
     "ooratchimani": "https://ooratchimani.org/#/login-link",
 
 };
-
-// keep for future extension
-// keep for future extension
