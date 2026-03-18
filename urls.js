@@ -11,8 +11,8 @@ window.URLS = {
 
     //Scheme Side
     "AGAMT": "https://tnagamt.indianbank.bank.in/select-scheme",
-    "VPTAX": "#",
-    "TNPASS": "#",
+    "VPTAX": "https://vptax.tnrd.tn.gov.in/",
+    "TNPASS": "https://tndrdpri.indianbankuat.bank.in/login",
 
     //A2
     "SIDS, RBIOCGS & CFSIDS": "https://tnrdprsis.iob.bank.in/login",
