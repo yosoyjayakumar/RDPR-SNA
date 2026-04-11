@@ -32,6 +32,47 @@ h1 {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
+.top-menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.top-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.25rem;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px;
+    font-weight: 600;
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.top-version {
+    margin-left: auto;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+}
+
+.top-button:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.top-button-icon {
+    font-size: 1.1rem;
+}
+
 .page {
     display: none;
     animation: fadeIn 0.5s ease-in-out;
