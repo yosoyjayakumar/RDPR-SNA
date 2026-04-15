@@ -40,5 +40,6 @@ window.URLS = {
     //Random
     "Speed Test": "https://fast.com/#",
     "Number2Words": "https://num2word.com/",
-    "unicode2suntommy": "https://tamilfontconverter.com/unicode-to-suntommy/"
+    "unicode2suntommy": "https://tamilfontconverter.com/unicode-to-suntommy/",
+    "English to Tamil": "https://translate.google.co.in/?sl=en&tl=ta&op=docs"
 };
