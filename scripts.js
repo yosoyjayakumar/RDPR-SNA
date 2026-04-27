@@ -115,7 +115,7 @@ function updateVisitCount() {
 
     // Using counterapi.dev to track visits. 
     // Namespace 'rdrp-sna' matches the project name.
-    fetch('https://api.counterapi.dev/v1/rdrp-sna/pagess/up')
+    fetch('https://api.counterapi.dev/v2/rdrp-sna/pagess/up')
         .then(response => response.json())
         .then(data => {
             if (data && data.count) {
