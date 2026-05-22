@@ -252,6 +252,89 @@ function initEngineerForms() {
     });
 }
 
+function initNumericKeypad() {
+    const keypad = document.getElementById('numericKeypad');
+    if (!keypad) return;
+
+    const keys = ['7','8','9','4','5','6','1','2','3','0','.'];
+    keypad.innerHTML = keys.map(key => `<button type="button" class="key">${key}</button>`).join('') +
+        `<button type="button" class="action-key backspace-key" data-action="backspace">⌫</button>` +
+        `<button type="button" class="action-key enter-key" data-action="enter">Enter</button>`;
+
+    let activeInput = null;
+    let pointerInKeypad = false;
+
+    function updatePosition(input) {
+        const rect = input.getBoundingClientRect();
+        const keypadRect = keypad.getBoundingClientRect();
+        const left = Math.min(Math.max(rect.left, 10), window.innerWidth - keypadRect.width - 10);
+        let top = rect.bottom + 10;
+        if (top + keypadRect.height > window.innerHeight - 10) {
+            top = rect.top - keypadRect.height - 10;
+        }
+        keypad.style.left = `${left + window.scrollX}px`;
+        keypad.style.top = `${top + window.scrollY}px`;
+    }
+
+    function showKeypad(input) {
+        activeInput = input;
+        keypad.classList.remove('hidden');
+        keypad.setAttribute('aria-hidden', 'false');
+        updatePosition(input);
+        input.focus({preventScroll: true});
+    }
+
+    function hideKeypad() {
+        activeInput = null;
+        keypad.classList.add('hidden');
+        keypad.setAttribute('aria-hidden', 'true');
+    }
+
+    const numberInputs = document.querySelectorAll('input[type="number"]');
+    numberInputs.forEach(input => {
+        input.addEventListener('focus', () => showKeypad(input));
+        input.addEventListener('click', () => showKeypad(input));
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                hideKeypad();
+            }
+        });
+    });
+
+    keypad.addEventListener('pointerenter', () => { pointerInKeypad = true; });
+    keypad.addEventListener('pointerleave', () => { pointerInKeypad = false; });
+
+    keypad.addEventListener('click', function(event) {
+        const button = event.target.closest('button');
+        if (!button || !activeInput) return;
+        const action = button.dataset.action;
+        if (action === 'backspace') {
+            activeInput.value = activeInput.value.slice(0, -1);
+            activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+        }
+        if (action === 'enter') {
+            hideKeypad();
+            activeInput.blur();
+            return;
+        }
+        const value = button.textContent;
+        if (value === '.' && activeInput.value.includes('.')) return;
+        activeInput.value += value;
+        activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    document.addEventListener('pointerdown', event => {
+        if (!keypad.contains(event.target) && activeInput && event.target !== activeInput) {
+            if (!pointerInKeypad) hideKeypad();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (activeInput) updatePosition(activeInput);
+    });
+}
+
 // Optional: Add keyboard navigation
 (function(){
     const canvas = document.getElementById('bgCanvas');
@@ -388,4 +471,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     initEngineerForms();
+    initNumericKeypad();
 });

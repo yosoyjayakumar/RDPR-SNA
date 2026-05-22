@@ -479,6 +479,65 @@ h1 {
     box-shadow: 0 10px 22px rgba(0,0,0,0.16);
 }
 
+.numeric-keypad {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
+    gap: 8px;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(12, 17, 32, 0.96);
+    backdrop-filter: blur(12px);
+    color: white;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+    z-index: 9999;
+    min-width: 220px;
+    max-width: 280px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.numeric-keypad.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.98);
+}
+
+.numeric-keypad button {
+    appearance: none;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.numeric-keypad button:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
+}
+
+.numeric-keypad button.action-key {
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.95rem;
+}
+
+.numeric-keypad button.enter-key {
+    grid-column: span 3;
+    background: linear-gradient(45deg, #4ecdc4, #26de81);
+}
+
+.numeric-keypad button.enter-key:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+}
+
+.numeric-keypad button.backspace-key {
+    background: rgba(255, 255, 255, 0.14);
+}
+
 .clear-btn {
     width: 100%;
     border: none;
