@@ -19,9 +19,9 @@
                 </a>
                 <a href="https://github.com/yosoyjayakumar/RDPR-SNA/" class="top-button" target="_blank" rel="noopener noreferrer">
                     <span class="top-button-icon">🔗</span>
-                    Github
+                    Source Code
                 </a>
-                <span class="top-version">v1.0.2</span> 
+                <span class="top-version">v1.0.3</span> 
             </div>
             <h1>RDPR-SNA</h1>
             <div class="search-wrap">
@@ -33,6 +33,10 @@
                         <div class="card" data-url-key="GOs" onclick="openMapped('GOs')">
                             <div class="card-media"><img src="Icon/GO.png" class="card-logo" alt="G.O's"></div>
                             <div class="card-title">G.O's</div>
+                        </div>
+                        <div class="card" onclick="showPage('engineers')">
+                               <div class="card-media"><img src="Icon/calculator.png" class="card-logo" alt="Engineers Tool"></div>
+                            <div class="card-title">Engineers Tool</div>
                         </div>
                     </div>
                 </section>
@@ -196,6 +200,110 @@
                         </div>
                     </div>
                 </section>
+            </div>
+        </div>
+        <div id="engineers" class="page">
+            <div class="top-menu">
+                    <button class="top-button" onclick="showPage('home')">
+                        <span class="top-button-icon">←</span>
+                        Back
+                    </button>
+                    <span class="top-version">ET v1.0.0</span>
+                </div>
+                <h1>Engineers Tool</h1>
+                <div class="page-content">
+                    <p>Road, bridge, building and construction measurement calculators for engineers and site work.</p>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <h3>Road Surface & Asphalt</h3>
+                            <form id="roadCalcForm">
+                                <label for="roadLength">Length (m)</label>
+                                <input type="number" id="roadLength" name="roadLength" min="0" step="0.01" placeholder="Enter road length">
+                                <label for="roadWidth">Width (m)</label>
+                                <input type="number" id="roadWidth" name="roadWidth" min="0" step="0.01" placeholder="Enter road width">
+                                <label for="roadThickness">Thickness (mm)</label>
+                                <input type="number" id="roadThickness" name="roadThickness" min="0" step="0.1" placeholder="Enter layer thickness">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="roadResult">Enter values and click calculate.</div>
+                        </div>
+                        <div class="tool-card">
+                            <h3>Bridge Load Estimate</h3>
+                            <form id="bridgeCalcForm">
+                                <label for="bridgeSpan">Span Length (m)</label>
+                                <input type="number" id="bridgeSpan" name="bridgeSpan" min="0" step="0.01" placeholder="Enter bridge span">
+                                <label for="totalLoad">Total Load (kN)</label>
+                                <input type="number" id="totalLoad" name="totalLoad" min="0" step="0.1" placeholder="Enter design load">
+                                <label for="numBeams">Number of Beams</label>
+                                <input type="number" id="numBeams" name="numBeams" min="1" step="1" placeholder="Enter beam count">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="bridgeResult">Enter values and click calculate.</div>
+                        </div>
+                        <div class="tool-card">
+                            <h3>Building Volume</h3>
+                            <form id="buildingCalcForm">
+                                <label for="buildingLength">Length (m)</label>
+                                <input type="number" id="buildingLength" name="buildingLength" min="0" step="0.01" placeholder="Enter building length">
+                                <label for="buildingWidth">Width (m)</label>
+                                <input type="number" id="buildingWidth" name="buildingWidth" min="0" step="0.01" placeholder="Enter building width">
+                                <label for="buildingHeight">Height (m)</label>
+                                <input type="number" id="buildingHeight" name="buildingHeight" min="0" step="0.01" placeholder="Enter building height">
+                                <label for="wallThickness">Wall Thickness (mm)</label>
+                                <input type="number" id="wallThickness" name="wallThickness" min="0" step="0.1" placeholder="Enter wall thickness">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="buildingResult">Enter values and click calculate.</div>
+                        </div>
+                        <div class="tool-card">
+                            <h3>Rebar Weight</h3>
+                            <form id="rebarCalcForm">
+                                <label for="rebarDiameter">Diameter (mm)</label>
+                                <input type="number" id="rebarDiameter" name="rebarDiameter" min="0" step="0.1" placeholder="Enter bar diameter">
+                                <label for="rebarLength">Length per Bar (m)</label>
+                                <input type="number" id="rebarLength" name="rebarLength" min="0" step="0.01" placeholder="Enter length per bar">
+                                <label for="rebarCount">Number of Bars</label>
+                                <input type="number" id="rebarCount" name="rebarCount" min="1" step="1" placeholder="Enter bar count">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="rebarResult">Enter values and click calculate.</div>
+                        </div>
+                        <div class="tool-card">
+                            <h3>Earthwork Volume</h3>
+                            <form id="earthworkCalcForm">
+                                <label for="startArea">Start Area (m²)</label>
+                                <input type="number" id="startArea" name="startArea" min="0" step="0.01" placeholder="Enter start area">
+                                <label for="endArea">End Area (m²)</label>
+                                <input type="number" id="endArea" name="endArea" min="0" step="0.01" placeholder="Enter end area">
+                                <label for="earthworkLength">Length (m)</label>
+                                <input type="number" id="earthworkLength" name="earthworkLength" min="0" step="0.01" placeholder="Enter length">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="earthworkResult">Enter values and click calculate.</div>
+                        </div>
+                        <div class="tool-card">
+                            <h3>Concrete Quantity</h3>
+                            <form id="concreteCalcForm">
+                                <label for="concreteLength">Length (m)</label>
+                                <input type="number" id="concreteLength" name="concreteLength" min="0" step="0.01" placeholder="Enter length">
+                                <label for="concreteWidth">Width (m)</label>
+                                <input type="number" id="concreteWidth" name="concreteWidth" min="0" step="0.01" placeholder="Enter width">
+                                <label for="concreteDepth">Depth (mm)</label>
+                                <input type="number" id="concreteDepth" name="concreteDepth" min="0" step="0.1" placeholder="Enter depth">
+                                <button type="submit" class="calc-btn">Calculate</button>
+                            </form>
+                            <div class="calc-result" id="concreteResult">Enter values and click calculate.</div>
+                        </div>
+                    </div>
+                    <div class="feature-list">
+                        <h3>Additional calculations coming soon</h3>
+                        <ul>
+                            <li>Beam load distribution</li>
+                            <li>Column reinforcement sizing</li>
+                            <li>Material conversion checks</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="footer-counter">
                 <p>Total Visits: <span id="visit-count">...</span></p>

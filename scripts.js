@@ -125,7 +125,124 @@ function updateVisitCount() {
         .catch(err => console.error('Visit counter failed:', err));
 }
 
-// Interactive atom dots background
+function formatCalcValue(value) {
+    return Number(value).toLocaleString('en-US', { maximumFractionDigits: 3 });
+}
+
+function showCalcResult(containerId, text) {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = text;
+}
+
+function initEngineerForms() {
+    const roadForm = document.getElementById('roadCalcForm');
+    if (roadForm) {
+        roadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const length = parseFloat(this.roadLength.value);
+            const width = parseFloat(this.roadWidth.value);
+            const thickness = parseFloat(this.roadThickness.value);
+            if (!length || !width || !thickness) {
+                showCalcResult('roadResult', 'Please enter valid road dimensions.');
+                return;
+            }
+            const area = length * width;
+            const volume = area * (thickness / 1000);
+            const asphaltWeight = volume * 2.35;
+            showCalcResult('roadResult', `Surface area: <strong>${formatCalcValue(area)}</strong> m²<br>Volume: <strong>${formatCalcValue(volume)}</strong> m³<br>Estimated asphalt weight: <strong>${formatCalcValue(asphaltWeight)}</strong> tonnes (approx)`);
+        });
+    }
+
+    const bridgeForm = document.getElementById('bridgeCalcForm');
+    if (bridgeForm) {
+        bridgeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const span = parseFloat(this.bridgeSpan.value);
+            const totalLoad = parseFloat(this.totalLoad.value);
+            const beams = parseInt(this.numBeams.value, 10);
+            if (!span || !totalLoad || !beams) {
+                showCalcResult('bridgeResult', 'Please enter valid bridge span, load, and beam count.');
+                return;
+            }
+            const loadPerBeam = totalLoad / beams;
+            const loadPerMeter = totalLoad / span;
+            showCalcResult('bridgeResult', `Load per beam: <strong>${formatCalcValue(loadPerBeam)}</strong> kN<br>Uniform load per meter: <strong>${formatCalcValue(loadPerMeter)}</strong> kN/m`);
+        });
+    }
+
+    const buildingForm = document.getElementById('buildingCalcForm');
+    if (buildingForm) {
+        buildingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const length = parseFloat(this.buildingLength.value);
+            const width = parseFloat(this.buildingWidth.value);
+            const height = parseFloat(this.buildingHeight.value);
+            const thickness = parseFloat(this.wallThickness.value);
+            if (!length || !width || !height || !thickness) {
+                showCalcResult('buildingResult', 'Please enter valid building dimensions.');
+                return;
+            }
+            const floorArea = length * width;
+            const enclosedVolume = floorArea * height;
+            const wallVolume = 2 * (length + width) * height * (thickness / 1000);
+            showCalcResult('buildingResult', `Floor area: <strong>${formatCalcValue(floorArea)}</strong> m²<br>Enclosed volume: <strong>${formatCalcValue(enclosedVolume)}</strong> m³<br>Wall concrete volume: <strong>${formatCalcValue(wallVolume)}</strong> m³`);
+        });
+    }
+
+    const rebarForm = document.getElementById('rebarCalcForm');
+    if (rebarForm) {
+        rebarForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const diameter = parseFloat(this.rebarDiameter.value);
+            const length = parseFloat(this.rebarLength.value);
+            const count = parseInt(this.rebarCount.value, 10);
+            if (!diameter || !length || !count) {
+                showCalcResult('rebarResult', 'Please enter valid rebar diameter, length, and quantity.');
+                return;
+            }
+            const area = Math.PI * Math.pow(diameter / 1000, 2) / 4;
+            const weightPerBar = area * length * 7850;
+            const totalWeight = weightPerBar * count;
+            showCalcResult('rebarResult', `Weight per bar: <strong>${formatCalcValue(weightPerBar)}</strong> kg<br>Total rebar weight: <strong>${formatCalcValue(totalWeight)}</strong> kg`);
+        });
+    }
+
+    const earthworkForm = document.getElementById('earthworkCalcForm');
+    if (earthworkForm) {
+        earthworkForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const startArea = parseFloat(this.startArea.value);
+            const endArea = parseFloat(this.endArea.value);
+            const length = parseFloat(this.earthworkLength.value);
+            if (!startArea || !endArea || !length) {
+                showCalcResult('earthworkResult', 'Please enter valid earthwork areas and length.');
+                return;
+            }
+            const volume = ((startArea + endArea) / 2) * length;
+            showCalcResult('earthworkResult', `Earthwork volume: <strong>${formatCalcValue(volume)}</strong> m³<br>(Average end area method)`);
+        });
+    }
+
+    const concreteForm = document.getElementById('concreteCalcForm');
+    if (concreteForm) {
+        concreteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const length = parseFloat(this.concreteLength.value);
+            const width = parseFloat(this.concreteWidth.value);
+            const depth = parseFloat(this.concreteDepth.value);
+            if (!length || !width || !depth) {
+                showCalcResult('concreteResult', 'Please enter valid slab dimensions.');
+                return;
+            }
+            const volume = length * width * (depth / 1000);
+            const dryVolume = volume * 1.54;
+            const cementBags = dryVolume * 8.33;
+            showCalcResult('concreteResult', `Concrete volume: <strong>${formatCalcValue(volume)}</strong> m³<br>Dry volume: <strong>${formatCalcValue(dryVolume)}</strong> m³<br>Estimated cement: <strong>${formatCalcValue(cementBags)}</strong> bags (1 bag = 0.035 m³)`);
+        });
+    }
+}
+
+// Optional: Add keyboard navigation
 (function(){
     const canvas = document.getElementById('bgCanvas');
     if (!canvas) return; // bail if canvas missing
@@ -260,4 +377,5 @@ document.addEventListener('DOMContentLoaded', function() {
             section.style.display = hasVisible ? '' : 'none';
         });
     });
+    initEngineerForms();
 });
