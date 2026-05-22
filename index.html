@@ -208,7 +208,7 @@
                         <span class="top-button-icon">←</span>
                         Back
                     </button>
-                    <span class="top-version">ET v1.0.0</span>
+                    <span class="top-version">ET v1.0.1</span>
                 </div>
                 <h1>Engineers Tool</h1>
                 <div class="page-content">
@@ -224,6 +224,7 @@
                                 <label for="roadThickness">Thickness (mm)</label>
                                 <input type="number" id="roadThickness" name="roadThickness" min="0" step="0.1" placeholder="Enter layer thickness">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="roadResult">Clear</button>
                             </form>
                             <div class="calc-result" id="roadResult">Enter values and click calculate.</div>
                         </div>
@@ -237,6 +238,7 @@
                                 <label for="numBeams">Number of Beams</label>
                                 <input type="number" id="numBeams" name="numBeams" min="1" step="1" placeholder="Enter beam count">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="bridgeResult">Clear</button>
                             </form>
                             <div class="calc-result" id="bridgeResult">Enter values and click calculate.</div>
                         </div>
@@ -252,6 +254,7 @@
                                 <label for="wallThickness">Wall Thickness (mm)</label>
                                 <input type="number" id="wallThickness" name="wallThickness" min="0" step="0.1" placeholder="Enter wall thickness">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="buildingResult">Clear</button>
                             </form>
                             <div class="calc-result" id="buildingResult">Enter values and click calculate.</div>
                         </div>
@@ -265,6 +268,7 @@
                                 <label for="rebarCount">Number of Bars</label>
                                 <input type="number" id="rebarCount" name="rebarCount" min="1" step="1" placeholder="Enter bar count">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="rebarResult">Clear</button>
                             </form>
                             <div class="calc-result" id="rebarResult">Enter values and click calculate.</div>
                         </div>
@@ -278,6 +282,7 @@
                                 <label for="earthworkLength">Length (m)</label>
                                 <input type="number" id="earthworkLength" name="earthworkLength" min="0" step="0.01" placeholder="Enter length">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="earthworkResult">Clear</button>
                             </form>
                             <div class="calc-result" id="earthworkResult">Enter values and click calculate.</div>
                         </div>
@@ -291,6 +296,7 @@
                                 <label for="concreteDepth">Depth (mm)</label>
                                 <input type="number" id="concreteDepth" name="concreteDepth" min="0" step="0.1" placeholder="Enter depth">
                                 <button type="submit" class="calc-btn">Calculate</button>
+                                <button type="button" class="clear-btn" data-result="concreteResult">Clear</button>
                             </form>
                             <div class="calc-result" id="concreteResult">Enter values and click calculate.</div>
                         </div>

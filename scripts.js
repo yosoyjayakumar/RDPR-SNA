@@ -240,6 +240,16 @@ function initEngineerForms() {
             showCalcResult('concreteResult', `Concrete volume: <strong>${formatCalcValue(volume)}</strong> m³<br>Dry volume: <strong>${formatCalcValue(dryVolume)}</strong> m³<br>Estimated cement: <strong>${formatCalcValue(cementBags)}</strong> bags (1 bag = 0.035 m³)`);
         });
     }
+
+    const clearButtons = document.querySelectorAll('.clear-btn');
+    clearButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('form');
+            if (form) form.reset();
+            const resultId = this.dataset.result;
+            if (resultId) showCalcResult(resultId, 'Enter values and click calculate.');
+        });
+    });
 }
 
 // Optional: Add keyboard navigation
