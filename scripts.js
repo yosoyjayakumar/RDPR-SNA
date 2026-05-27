@@ -1,7 +1,13 @@
 // Immediate Theme initialization to prevent style flashing before DOM renders
 (function() {
-    const savedTheme = localStorage.getItem('theme') || 'cosmic';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedTheme = localStorage.getItem('theme') || 'auto';
+    let themeToApply = savedTheme;
+    if (savedTheme === 'auto') {
+        const dailyThemes = ['solar', 'cosmic', 'cyberpunk', 'ocean', 'forest', 'aurora', 'cyberpunk'];
+        const day = new Date().getDay();
+        themeToApply = dailyThemes[day];
+    }
+    document.documentElement.setAttribute('data-theme', themeToApply);
 })();
 
 function showPage(pageId) {
@@ -478,7 +484,13 @@ function initThemeSwitcher() {
     if (!themeBtn || !themeDropdown) return;
 
     function setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
+        let themeToApply = theme;
+        if (theme === 'auto') {
+            const dailyThemes = ['solar', 'cosmic', 'cyberpunk', 'ocean', 'forest', 'aurora', 'cyberpunk'];
+            const day = new Date().getDay();
+            themeToApply = dailyThemes[day];
+        }
+        document.documentElement.setAttribute('data-theme', themeToApply);
         localStorage.setItem('theme', theme);
 
         // Update active class on dropdown options
@@ -495,7 +507,7 @@ function initThemeSwitcher() {
     }
 
     // Initialize dropdown active classes
-    const currentTheme = localStorage.getItem('theme') || 'cosmic';
+    const currentTheme = localStorage.getItem('theme') || 'auto';
     setTheme(currentTheme);
 
     // Toggle menu
