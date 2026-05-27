@@ -1,3 +1,9 @@
+// Immediate Theme initialization to prevent style flashing before DOM renders
+(function() {
+    const savedTheme = localStorage.getItem('theme') || 'cosmic';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+})();
+
 function showPage(pageId) {
     // Hide all pages
     const pages = document.querySelectorAll('.page');
@@ -351,6 +357,13 @@ function initNumericKeypad() {
 
     function rand(min, max){ return Math.random() * (max - min) + min; }
 
+    function getParticleHueRange() {
+        const styles = getComputedStyle(document.documentElement);
+        const min = parseInt(styles.getPropertyValue('--particle-hue-min')) || 180;
+        const max = parseInt(styles.getPropertyValue('--particle-hue-max')) || 260;
+        return { min, max };
+    }
+
     function Particle(x,y,r){
         this.x = x || rand(0,width);
         this.y = y || rand(0,height);
@@ -358,7 +371,8 @@ function initNumericKeypad() {
         this.vy = rand(-0.35,0.35);
         this.r = r || rand(1,3.2);
         this.baseR = this.r;
-        this.h = rand(180,260);
+        const range = getParticleHueRange();
+        this.h = rand(range.min, range.max);
     }
 
     Particle.prototype.update = function(){
@@ -431,6 +445,13 @@ function initNumericKeypad() {
     window.addEventListener('mouseout', ()=> { mouse.x = null; mouse.y = null; });
     window.addEventListener('resize', resize);
 
+    document.addEventListener('theme-changed', () => {
+        const range = getParticleHueRange();
+        particles.forEach(p => {
+            p.h = rand(range.min, range.max);
+        });
+    });
+
     // styling canvas behind content without blocking interactions
     canvas.style.position = 'fixed';
     canvas.style.top = '0';
@@ -448,6 +469,62 @@ function initNumericKeypad() {
     resize();
     animate();
 })();
+
+function initThemeSwitcher() {
+    const themeBtn = document.getElementById('themeBtn');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    if (!themeBtn || !themeDropdown) return;
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+
+        // Update active class on dropdown options
+        themeOptions.forEach(opt => {
+            if (opt.getAttribute('data-theme') === theme) {
+                opt.classList.add('active');
+            } else {
+                opt.classList.remove('active');
+            }
+        });
+
+        // Broadcast event for particles to update their hues
+        document.dispatchEvent(new CustomEvent('theme-changed'));
+    }
+
+    // Initialize dropdown active classes
+    const currentTheme = localStorage.getItem('theme') || 'cosmic';
+    setTheme(currentTheme);
+
+    // Toggle menu
+    themeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = themeBtn.getAttribute('aria-expanded') === 'true';
+        themeBtn.setAttribute('aria-expanded', !isExpanded);
+        themeDropdown.classList.toggle('show');
+    });
+
+    // Option clicks
+    themeOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const theme = option.getAttribute('data-theme');
+            setTheme(theme);
+            themeDropdown.classList.remove('show');
+            themeBtn.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    // Close on outside clicks
+    document.addEventListener('click', (e) => {
+        if (!themeBtn.contains(e.target) && !themeDropdown.contains(e.target)) {
+            themeDropdown.classList.remove('show');
+            themeBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
 
 // Global search filter — filters visible cards by title or data-url-key
 document.addEventListener('DOMContentLoaded', function() {
@@ -472,4 +549,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     initEngineerForms();
     initNumericKeypad();
+    initThemeSwitcher();
 });

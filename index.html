@@ -21,7 +21,39 @@
                     <span class="top-button-icon">🔗</span>
                     Source Code
                 </a>
-                <span class="top-version">v1.0.3</span> 
+                <div class="theme-select-container">
+                    <button type="button" class="top-button" id="themeBtn" aria-label="Toggle Theme Menu" aria-haspopup="true" aria-expanded="false">
+                        <span class="top-button-icon">🎨</span>
+                        Theme
+                    </button>
+                    <div class="theme-dropdown" id="themeDropdown" aria-label="Theme selection menu">
+                        <button type="button" class="theme-option active" data-theme="cosmic" aria-label="Select Cosmic Violet Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></span>
+                            Cosmic Violet
+                        </button>
+                        <button type="button" class="theme-option" data-theme="aurora" aria-label="Select Midnight Aurora Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #020617 0%, #0f172a 100%); border: 1px solid rgba(16, 185, 129, 0.4);"></span>
+                            Midnight Aurora
+                        </button>
+                        <button type="button" class="theme-option" data-theme="cyberpunk" aria-label="Select Cyberpunk Glow Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #09090b 0%, #180828 100%); border: 1px solid rgba(244, 63, 94, 0.4);"></span>
+                            Cyberpunk Glow
+                        </button>
+                        <button type="button" class="theme-option" data-theme="ocean" aria-label="Select Ocean Breeze Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #032b45 0%, #075e8a 100%); border: 1px solid rgba(56, 189, 248, 0.4);"></span>
+                            Ocean Breeze
+                        </button>
+                        <button type="button" class="theme-option" data-theme="solar" aria-label="Select Solar Eclipse Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #1c0a00 0%, #3a1c00 100%); border: 1px solid rgba(249, 115, 22, 0.4);"></span>
+                            Solar Eclipse
+                        </button>
+                        <button type="button" class="theme-option" data-theme="forest" aria-label="Select Nordic Forest Theme">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #051c14 0%, #0a2d20 100%); border: 1px solid rgba(34, 197, 94, 0.4);"></span>
+                            Nordic Forest
+                        </button>
+                    </div>
+                </div>
+                <span class="top-version">v1.0.4</span> 
             </div>
             <h1>RDPR-SNA</h1>
             <div class="search-wrap">
