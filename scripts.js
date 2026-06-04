@@ -566,6 +566,44 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initGamesPage() {
+    // ---------------------------------------------------------
+    // Arcade Switchboard / Tab Control
+    // ---------------------------------------------------------
+    const tabBtns = document.querySelectorAll('.arcade-tab-btn');
+    const panes = document.querySelectorAll('.game-pane');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            panes.forEach(p => p.classList.remove('active'));
+            
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            const targetPane = document.getElementById('pane-' + btn.dataset.game);
+            if (targetPane) {
+                targetPane.classList.add('active');
+                
+                // Focus input fields if applicable
+                if (btn.dataset.game === 'scramble') {
+                    const scrambleGuessEl = document.getElementById('scrambleGuess');
+                    if (scrambleGuessEl) scrambleGuessEl.focus();
+                } else if (btn.dataset.game === 'guess') {
+                    const guessInput = document.getElementById('guessNumberInput');
+                    if (guessInput) guessInput.focus();
+                } else if (btn.dataset.game === 'math') {
+                    const mathInput = document.getElementById('mathAnswerInput');
+                    if (mathInput) mathInput.focus();
+                }
+            }
+        });
+    });
+
+    // ---------------------------------------------------------
+    // Game 1: Word Scramble
+    // ---------------------------------------------------------
     const scrambleWords = [
         { word: 'puzzle', hint: 'A game or problem that tests ingenuity.' },
         { word: 'mirror', hint: 'A reflective surface often found in bathrooms.' },
@@ -581,8 +619,10 @@ function initGamesPage() {
     const scrambleFeedbackEl = document.getElementById('scrambleFeedback');
     const newScrambleBtn = document.getElementById('newScrambleBtn');
     const checkScrambleBtn = document.getElementById('checkScrambleBtn');
+    const scrambleStreakEl = document.getElementById('scrambleStreak');
 
     let currentScramble = null;
+    let scrambleStreak = 0;
 
     function shuffleWord(word) {
         const arr = word.split('');
@@ -594,29 +634,42 @@ function initGamesPage() {
     }
 
     function setNewScramble() {
+        if (!scrambleWords.length || !scrambleLettersEl) return;
         currentScramble = scrambleWords[Math.floor(Math.random() * scrambleWords.length)];
         let scrambled = currentScramble.word;
         while (scrambled === currentScramble.word) {
             scrambled = shuffleWord(currentScramble.word);
         }
         scrambleLettersEl.innerHTML = scrambled.split('').map(letter => `<span>${letter}</span>`).join('');
-        scrambleHintEl.textContent = currentScramble.hint;
-        scrambleGuessEl.value = '';
-        scrambleFeedbackEl.textContent = 'Try solving the scramble above.';
-        scrambleGuessEl.focus();
+        if (scrambleHintEl) scrambleHintEl.textContent = currentScramble.hint;
+        if (scrambleGuessEl) {
+            scrambleGuessEl.value = '';
+            scrambleGuessEl.focus();
+        }
+        if (scrambleFeedbackEl) {
+            scrambleFeedbackEl.textContent = 'Try solving the scramble above.';
+            scrambleFeedbackEl.className = 'game-message';
+        }
     }
 
     function checkScramble() {
-        const guess = (scrambleGuessEl.value || '').trim().toLowerCase();
+        if (!scrambleGuessEl || !scrambleFeedbackEl || !currentScramble) return;
+        const guess = scrambleGuessEl.value.trim().toLowerCase();
         if (!guess) {
             scrambleFeedbackEl.textContent = 'Enter your answer before checking.';
+            scrambleFeedbackEl.className = 'game-message error';
             return;
         }
         if (guess === currentScramble.word) {
             scrambleFeedbackEl.textContent = 'Great job! You solved it.';
+            scrambleFeedbackEl.className = 'game-message success';
+            scrambleStreak++;
         } else {
-            scrambleFeedbackEl.textContent = 'Not quite — try again.';
+            scrambleFeedbackEl.textContent = `Not quite — try again! (Answer was: ${currentScramble.word})`;
+            scrambleFeedbackEl.className = 'game-message error';
+            scrambleStreak = 0;
         }
+        if (scrambleStreakEl) scrambleStreakEl.textContent = scrambleStreak;
     }
 
     if (newScrambleBtn && checkScrambleBtn && scrambleLettersEl) {
@@ -631,16 +684,48 @@ function initGamesPage() {
         setNewScramble();
     }
 
+    // ---------------------------------------------------------
+    // Game 2: Sliding Puzzle
+    // ---------------------------------------------------------
     const slidingBoardEl = document.getElementById('slidingBoard');
     const slidingFeedbackEl = document.getElementById('slidingFeedback');
     const shufflePuzzleBtn = document.getElementById('shufflePuzzleBtn');
     const resetPuzzleBtn = document.getElementById('resetPuzzleBtn');
+    const slidingMovesEl = document.getElementById('slidingMoves');
+    const slidingTimerEl = document.getElementById('slidingTimer');
 
     let slidingBoardState = [];
+    let slidingMoves = 0;
+    let slidingTime = 0;
+    let slidingTimerInterval = null;
     const puzzleSize = 3;
 
     function createSolvedBoard() {
         return Array.from({ length: puzzleSize * puzzleSize }, (_, index) => index === puzzleSize * puzzleSize - 1 ? '' : String(index + 1));
+    }
+
+    function startSlidingTimer() {
+        if (slidingTimerInterval) return;
+        slidingTime = 0;
+        updateSlidingTimerDisplay();
+        slidingTimerInterval = setInterval(() => {
+            slidingTime++;
+            updateSlidingTimerDisplay();
+        }, 1000);
+    }
+
+    function stopSlidingTimer() {
+        if (slidingTimerInterval) {
+            clearInterval(slidingTimerInterval);
+            slidingTimerInterval = null;
+        }
+    }
+
+    function updateSlidingTimerDisplay() {
+        if (!slidingTimerEl) return;
+        const mins = String(Math.floor(slidingTime / 60)).padStart(2, '0');
+        const secs = String(slidingTime % 60).padStart(2, '0');
+        slidingTimerEl.textContent = `${mins}:${secs}`;
     }
 
     function renderSlidingBoard() {
@@ -668,33 +753,75 @@ function initGamesPage() {
     function moveTile(index) {
         const blankIndex = getBlankIndex();
         if (!isAdjacent(index, blankIndex)) return;
+        
+        // Swapping values
         [slidingBoardState[blankIndex], slidingBoardState[index]] = [slidingBoardState[index], slidingBoardState[blankIndex]];
+        
+        // Start timer on first move
+        if (slidingMoves === 0) {
+            startSlidingTimer();
+        }
+        
+        slidingMoves++;
+        if (slidingMovesEl) slidingMovesEl.textContent = slidingMoves;
+        
         renderSlidingBoard();
+        
         if (slidingBoardState.join(',') === createSolvedBoard().join(',')) {
-            slidingFeedbackEl.textContent = 'Well done! Puzzle solved.';
+            stopSlidingTimer();
+            if (slidingFeedbackEl) {
+                slidingFeedbackEl.textContent = `🏆 Well done! Solved in ${slidingMoves} moves & ${slidingTimerEl.textContent}!`;
+                slidingFeedbackEl.className = 'game-message success';
+            }
         } else {
-            slidingFeedbackEl.textContent = 'Keep going! Move the tiles until they are in order.';
+            if (slidingFeedbackEl) {
+                slidingFeedbackEl.textContent = 'Keep shifting tiles to match chronological order.';
+                slidingFeedbackEl.className = 'game-message';
+            }
         }
     }
 
-    function shuffleSlidingPuzzle(moves = 100) {
+    function shuffleSlidingPuzzle(moves = 120) {
+        // Reset moves and timers first
+        slidingMoves = 0;
+        if (slidingMovesEl) slidingMovesEl.textContent = '0';
+        stopSlidingTimer();
+        slidingTime = 0;
+        updateSlidingTimerDisplay();
+        
+        // Start with solved state and shuffle backwards
+        slidingBoardState = createSolvedBoard();
         for (let i = 0; i < moves; i++) {
             const blankIndex = getBlankIndex();
             const adjacentTiles = slidingBoardState.map((_, idx) => idx).filter(idx => isAdjacent(idx, blankIndex));
             const tileToMove = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
             [slidingBoardState[blankIndex], slidingBoardState[tileToMove]] = [slidingBoardState[tileToMove], slidingBoardState[blankIndex]];
         }
+        
+        // Ensure not accidentally shuffled into solved state
         if (slidingBoardState.join(',') === createSolvedBoard().join(',')) {
-            return shuffleSlidingPuzzle(20);
+            return shuffleSlidingPuzzle(15);
         }
+        
         renderSlidingBoard();
-        slidingFeedbackEl.textContent = 'Tiles shuffled! Tap a tile to move it into the empty space.';
+        if (slidingFeedbackEl) {
+            slidingFeedbackEl.textContent = 'Board shuffled! Make your first move to start the timer.';
+            slidingFeedbackEl.className = 'game-message';
+        }
     }
 
     function resetSlidingPuzzle() {
         slidingBoardState = createSolvedBoard();
         renderSlidingBoard();
-        slidingFeedbackEl.textContent = 'Tap a tile next to the empty space to move it.';
+        if (slidingFeedbackEl) {
+            slidingFeedbackEl.textContent = 'Tap a tile next to the empty space to move it.';
+            slidingFeedbackEl.className = 'game-message';
+        }
+        slidingMoves = 0;
+        if (slidingMovesEl) slidingMovesEl.textContent = '0';
+        stopSlidingTimer();
+        slidingTime = 0;
+        updateSlidingTimerDisplay();
     }
 
     if (slidingBoardEl && shufflePuzzleBtn && resetPuzzleBtn) {
@@ -703,31 +830,76 @@ function initGamesPage() {
         resetPuzzleBtn.addEventListener('click', resetSlidingPuzzle);
     }
 
+    // ---------------------------------------------------------
+    // Game 3: Guess the Number
+    // ---------------------------------------------------------
     const guessNumberInput = document.getElementById('guessNumberInput');
     const guessNumberBtn = document.getElementById('guessNumberBtn');
     const newGuessNumberBtn = document.getElementById('newGuessNumberBtn');
     const guessNumberFeedback = document.getElementById('guessNumberFeedback');
+    const guessAttemptsEl = document.getElementById('guessNumberAttempts');
+    const guessHistoryEl = document.getElementById('guessHistory');
+    
     let secretNumber = null;
+    let guessAttempts = 0;
 
     function setNewGuessNumber() {
         secretNumber = Math.floor(Math.random() * 100) + 1;
-        if (guessNumberInput) guessNumberInput.value = '';
-        if (guessNumberFeedback) guessNumberFeedback.textContent = 'Guess the secret number between 1 and 100.';
+        guessAttempts = 0;
+        if (guessAttemptsEl) guessAttemptsEl.textContent = '0';
+        if (guessHistoryEl) guessHistoryEl.innerHTML = '';
+        if (guessNumberInput) {
+            guessNumberInput.value = '';
+            guessNumberInput.focus();
+        }
+        if (guessNumberFeedback) {
+            guessNumberFeedback.textContent = 'Guess the secret number between 1 and 100.';
+            guessNumberFeedback.className = 'game-message';
+        }
     }
 
     function checkGuessNumber() {
+        if (!guessNumberInput || !guessNumberFeedback) return;
         const guess = parseInt(guessNumberInput.value, 10);
-        if (!guess || guess < 1 || guess > 100) {
-            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Please enter a number between 1 and 100.';
+        if (isNaN(guess) || guess < 1 || guess > 100) {
+            guessNumberFeedback.textContent = 'Please enter a valid number between 1 and 100.';
+            guessNumberFeedback.className = 'game-message error';
             return;
         }
+
+        guessAttempts++;
+        if (guessAttemptsEl) guessAttemptsEl.textContent = guessAttempts;
+
+        let badgeClass = '';
+        let badgeSymbol = '';
+
         if (guess === secretNumber) {
-            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Correct! You found the number.';
+            guessNumberFeedback.textContent = `🎉 Correct! You found the number in ${guessAttempts} attempts.`;
+            guessNumberFeedback.className = 'game-message success';
+            badgeClass = 'correct';
+            badgeSymbol = '🎉';
         } else if (guess < secretNumber) {
-            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Too low. Try a higher number.';
+            guessNumberFeedback.textContent = 'Too low. Try a higher number.';
+            guessNumberFeedback.className = 'game-message error';
+            badgeClass = 'too-low';
+            badgeSymbol = '↓';
         } else {
-            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Too high. Try a lower number.';
+            guessNumberFeedback.textContent = 'Too high. Try a lower number.';
+            guessNumberFeedback.className = 'game-message error';
+            badgeClass = 'too-high';
+            badgeSymbol = '↑';
         }
+
+        // Add to history list
+        if (guessHistoryEl) {
+            const badge = document.createElement('span');
+            badge.className = `guess-badge ${badgeClass}`;
+            badge.innerHTML = `<strong>${guess}</strong> ${badgeSymbol}`;
+            guessHistoryEl.appendChild(badge);
+        }
+        
+        guessNumberInput.value = '';
+        guessNumberInput.focus();
     }
 
     if (guessNumberBtn && newGuessNumberBtn && guessNumberInput) {
@@ -742,12 +914,22 @@ function initGamesPage() {
         setNewGuessNumber();
     }
 
+    // ---------------------------------------------------------
+    // Game 4: Math Challenge
+    // ---------------------------------------------------------
     const mathProblemEl = document.getElementById('mathProblem');
     const mathAnswerInput = document.getElementById('mathAnswerInput');
     const checkMathBtn = document.getElementById('checkMathBtn');
     const newMathBtn = document.getElementById('newMathBtn');
     const mathFeedback = document.getElementById('mathFeedback');
+    const mathComboEl = document.getElementById('mathCombo');
+    const mathHighScoreEl = document.getElementById('mathHighScore');
+
     let currentMath = null;
+    let mathCombo = 0;
+    let mathHighScore = parseInt(localStorage.getItem('mathHighScore') || '0', 10);
+
+    if (mathHighScoreEl) mathHighScoreEl.textContent = mathHighScore;
 
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -758,39 +940,70 @@ function initGamesPage() {
         const op = operators[Math.floor(Math.random() * operators.length)];
         let a = getRandomInt(2, 20);
         let b = getRandomInt(2, 20);
+        
         if (op === '-' && b > a) {
-            [a, b] = [b, a];
+            [a, b] = [b, a]; // Avoid negative answers
         }
         if (op === '×') {
             a = getRandomInt(2, 12);
             b = getRandomInt(2, 12);
         }
+        
         let answer = 0;
         if (op === '+') answer = a + b;
         if (op === '-') answer = a - b;
         if (op === '×') answer = a * b;
+        
         currentMath = { text: `${a} ${op} ${b} = ?`, answer };
         if (mathProblemEl) mathProblemEl.textContent = currentMath.text;
-        if (mathAnswerInput) mathAnswerInput.value = '';
-        if (mathFeedback) mathFeedback.textContent = 'Enter your answer and press Check.';
+        if (mathAnswerInput) {
+            mathAnswerInput.value = '';
+            mathAnswerInput.focus();
+        }
     }
 
     function checkMathAnswer() {
+        if (!mathAnswerInput || !mathFeedback || !currentMath) return;
         const answer = parseInt(mathAnswerInput.value, 10);
-        if (currentMath === null) return;
         if (isNaN(answer)) {
-            if (mathFeedback) mathFeedback.textContent = 'Please type a valid number.';
+            mathFeedback.textContent = 'Please type a valid number.';
+            mathFeedback.className = 'game-message error';
             return;
         }
+        
         if (answer === currentMath.answer) {
-            if (mathFeedback) mathFeedback.textContent = 'Nice! That answer is correct.';
+            mathCombo++;
+            if (mathComboEl) mathComboEl.textContent = mathCombo;
+            
+            if (mathCombo > mathHighScore) {
+                mathHighScore = mathCombo;
+                localStorage.setItem('mathHighScore', mathHighScore);
+                if (mathHighScoreEl) mathHighScoreEl.textContent = mathHighScore;
+            }
+            
+            mathFeedback.textContent = `Nice! Correct answer. Combo: ${mathCombo} 🔥`;
+            mathFeedback.className = 'game-message success';
+            
+            // Auto load next question after a brief delay
+            setTimeout(setNewMathProblem, 1000);
         } else {
-            if (mathFeedback) mathFeedback.textContent = 'That is not correct yet. Try again.';
+            mathCombo = 0;
+            if (mathComboEl) mathComboEl.textContent = '0';
+            mathFeedback.textContent = `Wrong! Correct answer was: ${currentMath.answer}. Combo broken!`;
+            mathFeedback.className = 'game-message error';
+            
+            setTimeout(setNewMathProblem, 1500);
         }
     }
 
     if (checkMathBtn && newMathBtn && mathAnswerInput) {
-        newMathBtn.addEventListener('click', setNewMathProblem);
+        newMathBtn.addEventListener('click', () => {
+            mathCombo = 0;
+            if (mathComboEl) mathComboEl.textContent = '0';
+            mathFeedback.textContent = 'Problem skipped. Combo reset!';
+            mathFeedback.className = 'game-message';
+            setNewMathProblem();
+        });
         checkMathBtn.addEventListener('click', checkMathAnswer);
         mathAnswerInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
@@ -799,5 +1012,265 @@ function initGamesPage() {
             }
         });
         setNewMathProblem();
+    }
+
+    // ---------------------------------------------------------
+    // Game 5: Tic Tac Toe
+    // ---------------------------------------------------------
+    const tttBoardEl = document.getElementById('tictactoeBoard');
+    const tttResetBtn = document.getElementById('resetTicTacToeBtn');
+    const tttResetScoresBtn = document.getElementById('resetTttScoresBtn');
+    const tttFeedback = document.getElementById('tictactoeFeedback');
+    const tttWinsXEl = document.getElementById('tttWinsX');
+    const tttWinsOEl = document.getElementById('tttWinsO');
+
+    let tttBoard = Array(9).fill('');
+    let tttCurrentPlayer = 'X';
+    let tttWins = {
+        X: parseInt(localStorage.getItem('tttWinsX') || '0', 10),
+        O: parseInt(localStorage.getItem('tttWinsO') || '0', 10)
+    };
+
+    function updateTttScoreboard() {
+        if (tttWinsXEl) tttWinsXEl.textContent = tttWins.X;
+        if (tttWinsOEl) tttWinsOEl.textContent = tttWins.O;
+    }
+
+    function renderTttBoard() {
+        if (!tttBoardEl) return;
+        tttBoardEl.innerHTML = tttBoard.map((cell, idx) => `
+            <button type="button" class="ttt-cell" data-index="${idx}" data-val="${cell}" ${cell ? 'aria-label="filled"' : ''}>${cell}</button>`
+        ).join('');
+        
+        tttBoardEl.querySelectorAll('.ttt-cell').forEach(cell => {
+            cell.addEventListener('click', handleTttCellClick);
+        });
+    }
+
+    function handleTttCellClick(event) {
+        const idx = Number(event.target.dataset.index);
+        if (tttBoard[idx]) return; // Occupied
+        
+        tttBoard[idx] = tttCurrentPlayer;
+        const winner = checkTttWin();
+        
+        if (winner) {
+            renderTttBoard();
+            if (tttFeedback) {
+                tttFeedback.textContent = `🎉 Player ${winner} wins! Click reset to rematch.`;
+                tttFeedback.className = 'game-message success';
+            }
+            
+            // Record win
+            tttWins[winner]++;
+            localStorage.setItem(`tttWins${winner}`, tttWins[winner]);
+            updateTttScoreboard();
+            
+            // Lock board
+            tttBoardEl.querySelectorAll('.ttt-cell').forEach(cell => cell.disabled = true);
+        } else if (tttBoard.every(c => c !== '')) {
+            renderTttBoard();
+            if (tttFeedback) {
+                tttFeedback.textContent = "It's a draw! Click reset to try again.";
+                tttFeedback.className = 'game-message';
+            }
+        } else {
+            tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
+            renderTttBoard();
+            if (tttFeedback) {
+                tttFeedback.textContent = `Player ${tttCurrentPlayer}'s turn.`;
+                tttFeedback.className = 'game-message';
+            }
+        }
+    }
+
+    function checkTttWin() {
+        const lines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Cols
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+        for (const [a, b, c] of lines) {
+            if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+                return tttBoard[a];
+            }
+        }
+        return null;
+    }
+
+    function resetTttGame() {
+        tttBoard = Array(9).fill('');
+        tttCurrentPlayer = 'X';
+        renderTttBoard();
+        if (tttFeedback) {
+            tttFeedback.textContent = "Start the game! Player X's turn.";
+            tttFeedback.className = 'game-message';
+        }
+        updateTttScoreboard();
+    }
+
+    if (tttBoardEl && tttResetBtn) {
+        tttResetBtn.addEventListener('click', resetTttGame);
+        if (tttResetScoresBtn) {
+            tttResetScoresBtn.addEventListener('click', () => {
+                tttWins.X = 0;
+                tttWins.O = 0;
+                localStorage.setItem('tttWinsX', '0');
+                localStorage.setItem('tttWinsO', '0');
+                updateTttScoreboard();
+                if (tttFeedback) {
+                    tttFeedback.textContent = 'Scoreboard cleared. Start new game.';
+                    tttFeedback.className = 'game-message';
+                }
+            });
+        }
+        resetTttGame();
+    }
+
+    // ---------------------------------------------------------
+    // Game 6: Chess Sandbox (Interactive Free Play!)
+    // ---------------------------------------------------------
+    const initialChessBoard = [
+        '♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜',
+        '♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟',
+        '', '', '', '', '', '', '', '',
+        '', '', '', '', '', '', '', '',
+        '', '', '', '', '', '', '', '',
+        '', '', '', '', '', '', '', '',
+        '♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙',
+        '♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'
+    ];
+    
+    let chessBoardState = [...initialChessBoard];
+    let selectedSquareIndex = null;
+    let isChessFlipped = false;
+    
+    const chessBoardEl = document.getElementById('chessBoard');
+    const resetChessBtn = document.getElementById('resetChessBtn');
+    const flipChessBtn = document.getElementById('flipChessBtn');
+    const chessFeedbackEl = document.getElementById('chessFeedback');
+
+    function getChessCoordinates(index) {
+        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        const file = files[index % 8];
+        const rank = ranks[Math.floor(index / 8)];
+        return file + rank;
+    }
+
+    function renderChessBoard() {
+        if (!chessBoardEl) return;
+        chessBoardEl.innerHTML = '';
+        
+        for (let i = 0; i < 64; i++) {
+            const piece = chessBoardState[i];
+            const row = Math.floor(i / 8);
+            const col = i % 8;
+            const isLight = (row + col) % 2 === 0;
+            
+            const square = document.createElement('button');
+            square.type = 'button';
+            square.className = `chess-square ${isLight ? 'light' : 'dark'}`;
+            if (selectedSquareIndex === i) {
+                square.classList.add('selected');
+            }
+            square.dataset.index = i;
+            
+            if (piece) {
+                square.innerHTML = `<span class="chess-piece">${piece}</span>`;
+                square.setAttribute('aria-label', `Piece ${piece} at ${getChessCoordinates(i)}`);
+            } else {
+                square.setAttribute('aria-label', `Empty square at ${getChessCoordinates(i)}`);
+            }
+            
+            square.addEventListener('click', () => handleChessSquareClick(i));
+            chessBoardEl.appendChild(square);
+        }
+    }
+
+    function handleChessSquareClick(idx) {
+        const piece = chessBoardState[idx];
+        
+        if (selectedSquareIndex === null) {
+            // Select piece
+            if (piece) {
+                selectedSquareIndex = idx;
+                if (chessFeedbackEl) {
+                    chessFeedbackEl.textContent = `Selected ${piece} at ${getChessCoordinates(idx)}. Click target square to move.`;
+                    chessFeedbackEl.className = 'game-message';
+                }
+                renderChessBoard();
+            } else {
+                if (chessFeedbackEl) {
+                    chessFeedbackEl.textContent = `Square ${getChessCoordinates(idx)} is empty. Select a piece first.`;
+                    chessFeedbackEl.className = 'game-message error';
+                }
+            }
+        } else {
+            // Move selected piece
+            if (selectedSquareIndex === idx) {
+                // Deselect
+                selectedSquareIndex = null;
+                if (chessFeedbackEl) {
+                    chessFeedbackEl.textContent = `Deselected piece.`;
+                    chessFeedbackEl.className = 'game-message';
+                }
+                renderChessBoard();
+            } else {
+                const movingPiece = chessBoardState[selectedSquareIndex];
+                const targetPiece = chessBoardState[idx];
+                
+                // Perform move
+                chessBoardState[idx] = movingPiece;
+                chessBoardState[selectedSquareIndex] = '';
+                
+                const fromCoord = getChessCoordinates(selectedSquareIndex);
+                const toCoord = getChessCoordinates(idx);
+                
+                selectedSquareIndex = null;
+                
+                if (chessFeedbackEl) {
+                    if (targetPiece) {
+                        chessFeedbackEl.textContent = `Moved ${movingPiece} from ${fromCoord} capturing ${targetPiece} at ${toCoord}!`;
+                        chessFeedbackEl.className = 'game-message success';
+                    } else {
+                        chessFeedbackEl.textContent = `Moved ${movingPiece} from ${fromCoord} to ${toCoord}.`;
+                        chessFeedbackEl.className = 'game-message';
+                    }
+                }
+                renderChessBoard();
+            }
+        }
+    }
+
+    if (chessBoardEl) {
+        if (resetChessBtn) {
+            resetChessBtn.addEventListener('click', () => {
+                chessBoardState = [...initialChessBoard];
+                selectedSquareIndex = null;
+                if (chessFeedbackEl) {
+                    chessFeedbackEl.textContent = 'Board reset. Select a piece to move.';
+                    chessFeedbackEl.className = 'game-message';
+                }
+                renderChessBoard();
+            });
+        }
+        
+        if (flipChessBtn) {
+            flipChessBtn.addEventListener('click', () => {
+                isChessFlipped = !isChessFlipped;
+                if (isChessFlipped) {
+                    chessBoardEl.classList.add('flipped');
+                } else {
+                    chessBoardEl.classList.remove('flipped');
+                }
+                if (chessFeedbackEl) {
+                    chessFeedbackEl.textContent = `Board orientation flipped.`;
+                    chessFeedbackEl.className = 'game-message';
+                }
+            });
+        }
+        
+        renderChessBoard();
     }
 }

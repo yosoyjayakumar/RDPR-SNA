@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RDPR-SNA</title>
     <link rel="icon" type="image/png" href="Icon/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -248,55 +251,211 @@
                     <span class="top-button-icon">←</span>
                     Back
                 </button>
-                <span class="top-version">Games v1.0.0</span>
+                <span class="top-version">Games v2.0.0</span>
             </div>
-            <h1>Offline Puzzle Games</h1>
-            <div class="page-content">
-                <p>Play offline puzzle games without leaving the app. Choose from a word scramble or sliding tile challenge.</p>
-                <div class="tool-grid">
-                    <div class="tool-card">
-                        <h3>Word Scramble</h3>
-                        <p>Unscramble the letters to find the hidden word.</p>
-                        <div class="scramble-letters" id="scrambleLetters" aria-live="polite"></div>
-                        <p class="scramble-hint"><strong>Hint:</strong> <span id="scrambleHint"></span></p>
-                        <input type="text" id="scrambleGuess" placeholder="Type your answer" aria-label="Word scramble guess">
-                        <div class="game-actions">
-                            <button type="button" id="newScrambleBtn" class="btn btn-secondary">New Puzzle</button>
-                            <button type="button" id="checkScrambleBtn" class="btn">Check Answer</button>
+            <h1>Arcade Zone</h1>
+            
+            <div class="arcade-container">
+                <!-- Sidebar / Tab Selector -->
+                <div class="arcade-selector" role="tablist" aria-label="Game Selection">
+                    <button type="button" class="arcade-tab-btn active" data-game="scramble" role="tab" aria-selected="true" aria-controls="pane-scramble">
+                        <span class="arcade-tab-icon">🔤</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Word Scramble</span>
+                            <span class="arcade-tab-tag">Word Puzzle</span>
                         </div>
-                        <div class="game-message" id="scrambleFeedback">Try solving the scramble above.</div>
+                    </button>
+                    <button type="button" class="arcade-tab-btn" data-game="sliding" role="tab" aria-selected="false" aria-controls="pane-sliding">
+                        <span class="arcade-tab-icon">🧩</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Sliding Puzzle</span>
+                            <span class="arcade-tab-tag">Logic Tile</span>
+                        </div>
+                    </button>
+                    <button type="button" class="arcade-tab-btn" data-game="guess" role="tab" aria-selected="false" aria-controls="pane-guess">
+                        <span class="arcade-tab-icon">🎯</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Guess Number</span>
+                            <span class="arcade-tab-tag">Deduction</span>
+                        </div>
+                    </button>
+                    <button type="button" class="arcade-tab-btn" data-game="math" role="tab" aria-selected="false" aria-controls="pane-math">
+                        <span class="arcade-tab-icon">⚡</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Math Challenge</span>
+                            <span class="arcade-tab-tag">Speed Arithmetic</span>
+                        </div>
+                    </button>
+                    <button type="button" class="arcade-tab-btn" data-game="ttt" role="tab" aria-selected="false" aria-controls="pane-ttt">
+                        <span class="arcade-tab-icon">❌</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Tic Tac Toe</span>
+                            <span class="arcade-tab-tag">1v1 Classic</span>
+                        </div>
+                    </button>
+                    <button type="button" class="arcade-tab-btn" data-game="chess" role="tab" aria-selected="false" aria-controls="pane-chess">
+                        <span class="arcade-tab-icon">👑</span>
+                        <div class="arcade-tab-text">
+                            <span class="arcade-tab-title">Chess Sandbox</span>
+                            <span class="arcade-tab-tag">Tactics Board</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Main Game Cabinet -->
+                <div class="arcade-cabinet">
+                    <div class="cabinet-overlay"></div>
+                    
+                    <!-- Word Scramble Pane -->
+                    <div class="game-pane active" id="pane-scramble" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>🔤 Word Scramble</h2>
+                            <div class="pane-stat">🔥 Streak: <span id="scrambleStreak">0</span></div>
+                        </div>
+                        <p class="game-desc">Unscramble the letters below to find the correct word. Use the hint if you get stuck!</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="scramble-letters" id="scrambleLetters" aria-live="polite"></div>
+                            <p class="scramble-hint">💡 <strong>Hint:</strong> <span id="scrambleHint"></span></p>
+                            
+                            <div class="game-input-group">
+                                <input type="text" id="scrambleGuess" placeholder="Type your answer..." aria-label="Word scramble guess">
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="checkScrambleBtn" class="btn">Check Answer</button>
+                                <button type="button" id="newScrambleBtn" class="btn btn-secondary">New Puzzle</button>
+                            </div>
+                            <div class="game-message" id="scrambleFeedback">Try solving the scramble above.</div>
+                        </div>
                     </div>
-                    <div class="tool-card">
-                        <h3>Sliding Puzzle</h3>
-                        <p>Rearrange the tiles to restore the correct order.</p>
-                        <div class="puzzle-board" id="slidingBoard" aria-label="Sliding puzzle board"></div>
-                        <div class="game-actions">
-                            <button type="button" id="shufflePuzzleBtn" class="btn btn-secondary">Shuffle</button>
-                            <button type="button" id="resetPuzzleBtn" class="btn">Reset</button>
+
+                    <!-- Sliding Puzzle Pane -->
+                    <div class="game-pane" id="pane-sliding" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>🧩 Sliding Puzzle</h2>
+                            <div class="pane-stats">
+                                <div class="pane-stat">🔢 Moves: <span id="slidingMoves">0</span></div>
+                                <div class="pane-stat">⏱️ Time: <span id="slidingTimer">00:00</span></div>
+                            </div>
                         </div>
-                        <div class="game-message" id="slidingFeedback">Tap a tile next to the empty space to move it.</div>
+                        <p class="game-desc">Rearrange the tiles in ascending order (1 to 8) from top-left. Tap a tile adjacent to the empty slot to slide it.</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="puzzle-board-container">
+                                <div class="puzzle-board" id="slidingBoard" aria-label="Sliding puzzle board"></div>
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="shufflePuzzleBtn" class="btn">Shuffle Board</button>
+                                <button type="button" id="resetPuzzleBtn" class="btn btn-secondary">Reset Solved</button>
+                            </div>
+                            <div class="game-message" id="slidingFeedback">Tap a tile next to the empty space to move it.</div>
+                        </div>
                     </div>
-                    <div class="tool-card">
-                        <h3>Guess the Number</h3>
-                        <p>Guess the hidden number between 1 and 100.</p>
-                        <div class="scramble-hint"><strong>Range:</strong> 1 to 100</div>
-                        <input type="number" id="guessNumberInput" min="1" max="100" placeholder="Your guess" aria-label="Guess the number">
-                        <div class="game-actions">
-                            <button type="button" id="guessNumberBtn" class="btn btn-secondary">Guess</button>
-                            <button type="button" id="newGuessNumberBtn" class="btn">New Game</button>
+
+                    <!-- Guess the Number Pane -->
+                    <div class="game-pane" id="pane-guess" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>🎯 Guess the Number</h2>
+                            <div class="pane-stat">🛡️ Attempts: <span id="guessNumberAttempts">0</span></div>
                         </div>
-                        <div class="game-message" id="guessNumberFeedback">Try to find the secret number.</div>
+                        <p class="game-desc">Find the secret number between 1 and 100. We'll tell you if your guess is too high or too low!</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="guess-meter">
+                                <div class="guess-range">Range: 1 – 100</div>
+                            </div>
+                            
+                            <div class="game-input-group">
+                                <input type="number" id="guessNumberInput" min="1" max="100" placeholder="Enter number (1-100)..." aria-label="Guess the number">
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="guessNumberBtn" class="btn">Submit Guess</button>
+                                <button type="button" id="newGuessNumberBtn" class="btn btn-secondary">New Game</button>
+                            </div>
+                            <div class="game-message" id="guessNumberFeedback">Try to find the secret number.</div>
+                            
+                            <div class="guess-history-container">
+                                <h4>Guess History</h4>
+                                <div class="guess-history" id="guessHistory"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tool-card">
-                        <h3>Math Challenge</h3>
-                        <p>Solve the current math problem as quickly as you can.</p>
-                        <div class="scramble-hint"><strong>Problem:</strong> <span id="mathProblem"></span></div>
-                        <input type="number" id="mathAnswerInput" placeholder="Your answer" aria-label="Math challenge answer">
-                        <div class="game-actions">
-                            <button type="button" id="checkMathBtn" class="btn btn-secondary">Check</button>
-                            <button type="button" id="newMathBtn" class="btn">New Problem</button>
+
+                    <!-- Math Challenge Pane -->
+                    <div class="game-pane" id="pane-math" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>⚡ Math Challenge</h2>
+                            <div class="pane-stats">
+                                <div class="pane-stat">🔥 Combo: <span id="mathCombo">0</span></div>
+                                <div class="pane-stat">🏆 High: <span id="mathHighScore">0</span></div>
+                            </div>
                         </div>
-                        <div class="game-message" id="mathFeedback">Solve the problem shown above.</div>
+                        <p class="game-desc">Solve the arithmetic expression as fast as possible to keep your combo alive!</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="math-display">
+                                <span class="math-label">Solve:</span>
+                                <span id="mathProblem" class="math-equation">...</span>
+                            </div>
+                            
+                            <div class="game-input-group">
+                                <input type="number" id="mathAnswerInput" placeholder="Your answer..." aria-label="Math challenge answer">
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="checkMathBtn" class="btn">Submit Answer</button>
+                                <button type="button" id="newMathBtn" class="btn btn-secondary">Skip Problem</button>
+                            </div>
+                            <div class="game-message" id="mathFeedback">Solve the problem shown above.</div>
+                        </div>
+                    </div>
+
+                    <!-- Tic Tac Toe Pane -->
+                    <div class="game-pane" id="pane-ttt" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>❌ Tic Tac Toe ⭕</h2>
+                            <div class="pane-stats">
+                                <div class="pane-stat">❌ X: <span id="tttWinsX">0</span></div>
+                                <div class="pane-stat">⭕ O: <span id="tttWinsO">0</span></div>
+                            </div>
+                        </div>
+                        <p class="game-desc">Classic 2-player local battle. Take turns placing marks. Align 3 of your symbols to win!</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="ttt-board-container">
+                                <div class="tic-tac-toe-board" id="tictactoeBoard" aria-label="Tic Tac Toe board"></div>
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="resetTicTacToeBtn" class="btn">Reset Game</button>
+                                <button type="button" id="resetTttScoresBtn" class="btn btn-secondary">Reset Score</button>
+                            </div>
+                            <div class="game-message" id="tictactoeFeedback">Start the game by clicking a cell.</div>
+                        </div>
+                    </div>
+
+                    <!-- Chess Sandbox Pane -->
+                    <div class="game-pane" id="pane-chess" role="tabpanel">
+                        <div class="pane-header">
+                            <h2>👑 Chess Sandbox</h2>
+                            <div class="pane-stat">⚡ Free Play</div>
+                        </div>
+                        <p class="game-desc">A sandbox chessboard to test tactics and map coordinates. Click a piece to select it, then click a target cell to move it. Click "Reset Board" to revert.</p>
+                        
+                        <div class="game-sandbox">
+                            <div class="chess-board-container">
+                                <div class="chess-board" id="chessBoard" aria-label="Chess board"></div>
+                            </div>
+                            
+                            <div class="game-actions">
+                                <button type="button" id="resetChessBtn" class="btn">Reset Board</button>
+                                <button type="button" id="flipChessBtn" class="btn btn-secondary">Flip Board</button>
+                            </div>
+                            <div class="game-message" id="chessFeedback">Click a piece to begin.</div>
+                        </div>
                     </div>
                 </div>
             </div>
