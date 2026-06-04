@@ -696,6 +696,78 @@ h1 {
     color: white;
 }
 
+.scramble-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0.75rem 0;
+}
+
+.scramble-letters span {
+    display: inline-flex;
+    min-width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.puzzle-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(60px, 1fr));
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.puzzle-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.14);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.puzzle-tile:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.28);
+}
+
+.puzzle-tile.empty {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.08);
+    cursor: default;
+}
+
+.game-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.game-message {
+    margin-top: 0.75rem;
+    color: var(--text-secondary);
+    min-height: 1.4rem;
+}
+
+.scramble-hint {
+    color: rgba(255,255,255,0.78);
+    margin-bottom: 0.75rem;
+}
+
 .calc-btn {
     width: 100%;
     border: none;

@@ -562,4 +562,242 @@ document.addEventListener('DOMContentLoaded', function() {
     initEngineerForms();
     initNumericKeypad();
     initThemeSwitcher();
+    initGamesPage();
 });
+
+function initGamesPage() {
+    const scrambleWords = [
+        { word: 'puzzle', hint: 'A game or problem that tests ingenuity.' },
+        { word: 'mirror', hint: 'A reflective surface often found in bathrooms.' },
+        { word: 'planet', hint: 'A large celestial body orbiting a star.' },
+        { word: 'nature', hint: 'Everything around us outside built spaces.' },
+        { word: 'garden', hint: 'A place to grow flowers, herbs, or vegetables.' },
+        { word: 'castle', hint: 'A large fortified building from the Middle Ages.' }
+    ];
+
+    const scrambleLettersEl = document.getElementById('scrambleLetters');
+    const scrambleHintEl = document.getElementById('scrambleHint');
+    const scrambleGuessEl = document.getElementById('scrambleGuess');
+    const scrambleFeedbackEl = document.getElementById('scrambleFeedback');
+    const newScrambleBtn = document.getElementById('newScrambleBtn');
+    const checkScrambleBtn = document.getElementById('checkScrambleBtn');
+
+    let currentScramble = null;
+
+    function shuffleWord(word) {
+        const arr = word.split('');
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr.join('');
+    }
+
+    function setNewScramble() {
+        currentScramble = scrambleWords[Math.floor(Math.random() * scrambleWords.length)];
+        let scrambled = currentScramble.word;
+        while (scrambled === currentScramble.word) {
+            scrambled = shuffleWord(currentScramble.word);
+        }
+        scrambleLettersEl.innerHTML = scrambled.split('').map(letter => `<span>${letter}</span>`).join('');
+        scrambleHintEl.textContent = currentScramble.hint;
+        scrambleGuessEl.value = '';
+        scrambleFeedbackEl.textContent = 'Try solving the scramble above.';
+        scrambleGuessEl.focus();
+    }
+
+    function checkScramble() {
+        const guess = (scrambleGuessEl.value || '').trim().toLowerCase();
+        if (!guess) {
+            scrambleFeedbackEl.textContent = 'Enter your answer before checking.';
+            return;
+        }
+        if (guess === currentScramble.word) {
+            scrambleFeedbackEl.textContent = 'Great job! You solved it.';
+        } else {
+            scrambleFeedbackEl.textContent = 'Not quite — try again.';
+        }
+    }
+
+    if (newScrambleBtn && checkScrambleBtn && scrambleLettersEl) {
+        newScrambleBtn.addEventListener('click', setNewScramble);
+        checkScrambleBtn.addEventListener('click', checkScramble);
+        scrambleGuessEl.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkScramble();
+            }
+        });
+        setNewScramble();
+    }
+
+    const slidingBoardEl = document.getElementById('slidingBoard');
+    const slidingFeedbackEl = document.getElementById('slidingFeedback');
+    const shufflePuzzleBtn = document.getElementById('shufflePuzzleBtn');
+    const resetPuzzleBtn = document.getElementById('resetPuzzleBtn');
+
+    let slidingBoardState = [];
+    const puzzleSize = 3;
+
+    function createSolvedBoard() {
+        return Array.from({ length: puzzleSize * puzzleSize }, (_, index) => index === puzzleSize * puzzleSize - 1 ? '' : String(index + 1));
+    }
+
+    function renderSlidingBoard() {
+        if (!slidingBoardEl) return;
+        slidingBoardEl.innerHTML = slidingBoardState.map((value, index) => {
+            const emptyClass = value === '' ? 'empty' : '';
+            return `<button type="button" class="puzzle-tile ${emptyClass}" data-index="${index}" ${value === '' ? 'aria-hidden="true"' : ''}>${value}</button>`;
+        }).join('');
+        const tiles = slidingBoardEl.querySelectorAll('.puzzle-tile');
+        tiles.forEach(tile => tile.addEventListener('click', () => moveTile(parseInt(tile.dataset.index, 10))));
+    }
+
+    function getBlankIndex() {
+        return slidingBoardState.indexOf('');
+    }
+
+    function isAdjacent(indexA, indexB) {
+        const rowA = Math.floor(indexA / puzzleSize);
+        const colA = indexA % puzzleSize;
+        const rowB = Math.floor(indexB / puzzleSize);
+        const colB = indexB % puzzleSize;
+        return Math.abs(rowA - rowB) + Math.abs(colA - colB) === 1;
+    }
+
+    function moveTile(index) {
+        const blankIndex = getBlankIndex();
+        if (!isAdjacent(index, blankIndex)) return;
+        [slidingBoardState[blankIndex], slidingBoardState[index]] = [slidingBoardState[index], slidingBoardState[blankIndex]];
+        renderSlidingBoard();
+        if (slidingBoardState.join(',') === createSolvedBoard().join(',')) {
+            slidingFeedbackEl.textContent = 'Well done! Puzzle solved.';
+        } else {
+            slidingFeedbackEl.textContent = 'Keep going! Move the tiles until they are in order.';
+        }
+    }
+
+    function shuffleSlidingPuzzle(moves = 100) {
+        for (let i = 0; i < moves; i++) {
+            const blankIndex = getBlankIndex();
+            const adjacentTiles = slidingBoardState.map((_, idx) => idx).filter(idx => isAdjacent(idx, blankIndex));
+            const tileToMove = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
+            [slidingBoardState[blankIndex], slidingBoardState[tileToMove]] = [slidingBoardState[tileToMove], slidingBoardState[blankIndex]];
+        }
+        if (slidingBoardState.join(',') === createSolvedBoard().join(',')) {
+            return shuffleSlidingPuzzle(20);
+        }
+        renderSlidingBoard();
+        slidingFeedbackEl.textContent = 'Tiles shuffled! Tap a tile to move it into the empty space.';
+    }
+
+    function resetSlidingPuzzle() {
+        slidingBoardState = createSolvedBoard();
+        renderSlidingBoard();
+        slidingFeedbackEl.textContent = 'Tap a tile next to the empty space to move it.';
+    }
+
+    if (slidingBoardEl && shufflePuzzleBtn && resetPuzzleBtn) {
+        resetSlidingPuzzle();
+        shufflePuzzleBtn.addEventListener('click', () => shuffleSlidingPuzzle());
+        resetPuzzleBtn.addEventListener('click', resetSlidingPuzzle);
+    }
+
+    const guessNumberInput = document.getElementById('guessNumberInput');
+    const guessNumberBtn = document.getElementById('guessNumberBtn');
+    const newGuessNumberBtn = document.getElementById('newGuessNumberBtn');
+    const guessNumberFeedback = document.getElementById('guessNumberFeedback');
+    let secretNumber = null;
+
+    function setNewGuessNumber() {
+        secretNumber = Math.floor(Math.random() * 100) + 1;
+        if (guessNumberInput) guessNumberInput.value = '';
+        if (guessNumberFeedback) guessNumberFeedback.textContent = 'Guess the secret number between 1 and 100.';
+    }
+
+    function checkGuessNumber() {
+        const guess = parseInt(guessNumberInput.value, 10);
+        if (!guess || guess < 1 || guess > 100) {
+            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Please enter a number between 1 and 100.';
+            return;
+        }
+        if (guess === secretNumber) {
+            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Correct! You found the number.';
+        } else if (guess < secretNumber) {
+            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Too low. Try a higher number.';
+        } else {
+            if (guessNumberFeedback) guessNumberFeedback.textContent = 'Too high. Try a lower number.';
+        }
+    }
+
+    if (guessNumberBtn && newGuessNumberBtn && guessNumberInput) {
+        newGuessNumberBtn.addEventListener('click', setNewGuessNumber);
+        guessNumberBtn.addEventListener('click', checkGuessNumber);
+        guessNumberInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkGuessNumber();
+            }
+        });
+        setNewGuessNumber();
+    }
+
+    const mathProblemEl = document.getElementById('mathProblem');
+    const mathAnswerInput = document.getElementById('mathAnswerInput');
+    const checkMathBtn = document.getElementById('checkMathBtn');
+    const newMathBtn = document.getElementById('newMathBtn');
+    const mathFeedback = document.getElementById('mathFeedback');
+    let currentMath = null;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function setNewMathProblem() {
+        const operators = ['+', '-', '×'];
+        const op = operators[Math.floor(Math.random() * operators.length)];
+        let a = getRandomInt(2, 20);
+        let b = getRandomInt(2, 20);
+        if (op === '-' && b > a) {
+            [a, b] = [b, a];
+        }
+        if (op === '×') {
+            a = getRandomInt(2, 12);
+            b = getRandomInt(2, 12);
+        }
+        let answer = 0;
+        if (op === '+') answer = a + b;
+        if (op === '-') answer = a - b;
+        if (op === '×') answer = a * b;
+        currentMath = { text: `${a} ${op} ${b} = ?`, answer };
+        if (mathProblemEl) mathProblemEl.textContent = currentMath.text;
+        if (mathAnswerInput) mathAnswerInput.value = '';
+        if (mathFeedback) mathFeedback.textContent = 'Enter your answer and press Check.';
+    }
+
+    function checkMathAnswer() {
+        const answer = parseInt(mathAnswerInput.value, 10);
+        if (currentMath === null) return;
+        if (isNaN(answer)) {
+            if (mathFeedback) mathFeedback.textContent = 'Please type a valid number.';
+            return;
+        }
+        if (answer === currentMath.answer) {
+            if (mathFeedback) mathFeedback.textContent = 'Nice! That answer is correct.';
+        } else {
+            if (mathFeedback) mathFeedback.textContent = 'That is not correct yet. Try again.';
+        }
+    }
+
+    if (checkMathBtn && newMathBtn && mathAnswerInput) {
+        newMathBtn.addEventListener('click', setNewMathProblem);
+        checkMathBtn.addEventListener('click', checkMathAnswer);
+        mathAnswerInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkMathAnswer();
+            }
+        });
+        setNewMathProblem();
+    }
+}

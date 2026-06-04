@@ -74,6 +74,10 @@
                                <div class="card-media"><img src="Icon/calculator.png" class="card-logo" alt="Engineers Tool"></div>
                             <div class="card-title">Engineers Tool</div>
                         </div>
+                        <div class="card" onclick="showPage('games')">
+                            <div class="card-media"><img src="Icon/Games.png" class="card-logo" alt="Offline Puzzle Games"></div>
+                            <div class="card-title">Games</div>
+                        </div>
                     </div>
                 </section>
 
@@ -236,6 +240,65 @@
                         </div>
                     </div>
                 </section>
+            </div>
+        </div>
+        <div id="games" class="page">
+            <div class="top-menu">
+                <button class="top-button" onclick="showPage('home')">
+                    <span class="top-button-icon">←</span>
+                    Back
+                </button>
+                <span class="top-version">Games v1.0.0</span>
+            </div>
+            <h1>Offline Puzzle Games</h1>
+            <div class="page-content">
+                <p>Play offline puzzle games without leaving the app. Choose from a word scramble or sliding tile challenge.</p>
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h3>Word Scramble</h3>
+                        <p>Unscramble the letters to find the hidden word.</p>
+                        <div class="scramble-letters" id="scrambleLetters" aria-live="polite"></div>
+                        <p class="scramble-hint"><strong>Hint:</strong> <span id="scrambleHint"></span></p>
+                        <input type="text" id="scrambleGuess" placeholder="Type your answer" aria-label="Word scramble guess">
+                        <div class="game-actions">
+                            <button type="button" id="newScrambleBtn" class="btn btn-secondary">New Puzzle</button>
+                            <button type="button" id="checkScrambleBtn" class="btn">Check Answer</button>
+                        </div>
+                        <div class="game-message" id="scrambleFeedback">Try solving the scramble above.</div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>Sliding Puzzle</h3>
+                        <p>Rearrange the tiles to restore the correct order.</p>
+                        <div class="puzzle-board" id="slidingBoard" aria-label="Sliding puzzle board"></div>
+                        <div class="game-actions">
+                            <button type="button" id="shufflePuzzleBtn" class="btn btn-secondary">Shuffle</button>
+                            <button type="button" id="resetPuzzleBtn" class="btn">Reset</button>
+                        </div>
+                        <div class="game-message" id="slidingFeedback">Tap a tile next to the empty space to move it.</div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>Guess the Number</h3>
+                        <p>Guess the hidden number between 1 and 100.</p>
+                        <div class="scramble-hint"><strong>Range:</strong> 1 to 100</div>
+                        <input type="number" id="guessNumberInput" min="1" max="100" placeholder="Your guess" aria-label="Guess the number">
+                        <div class="game-actions">
+                            <button type="button" id="guessNumberBtn" class="btn btn-secondary">Guess</button>
+                            <button type="button" id="newGuessNumberBtn" class="btn">New Game</button>
+                        </div>
+                        <div class="game-message" id="guessNumberFeedback">Try to find the secret number.</div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>Math Challenge</h3>
+                        <p>Solve the current math problem as quickly as you can.</p>
+                        <div class="scramble-hint"><strong>Problem:</strong> <span id="mathProblem"></span></div>
+                        <input type="number" id="mathAnswerInput" placeholder="Your answer" aria-label="Math challenge answer">
+                        <div class="game-actions">
+                            <button type="button" id="checkMathBtn" class="btn btn-secondary">Check</button>
+                            <button type="button" id="newMathBtn" class="btn">New Problem</button>
+                        </div>
+                        <div class="game-message" id="mathFeedback">Solve the problem shown above.</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="engineers" class="page">
