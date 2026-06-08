@@ -33,6 +33,8 @@ window.URLS = {
     "GST": "https://services.gst.gov.in/services/login",
     "IT": "https://www.incometax.gov.in/iec/foportal/",
     "CAMS": "https://cams.tn.gov.in/",
+    "CPS Employee": "http://cps.tn.gov.in/public/index.php",
+    "GPF Employee": "https://www.agae.tn.nic.in/onlinegpf/loginnew.aspx",
 
     //A5
     "Zoho": "https://www.zoho.com/desk/login.html",
