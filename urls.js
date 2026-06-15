@@ -2,6 +2,7 @@ window.URLS = {
 
    //Featured
     "GOs": "https://www.tn.gov.in/godept_list.php",
+    "HC Case Status": "https://hcservices.ecourts.gov.in/ecourtindiaHC/cases/case_no.php?state_cd=10&dist_cd=1&court_code=1&stateNm=Madras#",
     "NIC_Mail": "https://accounts.mgovcloud.in/",
     "TNRD": "https://tnrd.tn.gov.in/project/home.php",
     "Karuvoolam": "https://www.karuvoolam.tn.gov.in/web/tnta/",
