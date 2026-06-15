@@ -123,18 +123,30 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to fetch and display page visit count
 function updateVisitCount() {
     const counterElement = document.getElementById('visit-count');
-    if (!counterElement) return;
+    if (!counterElement) {
+        console.warn('Visit counter element not found');
+        return;
+    }
 
-    // Using counterapi.dev to track visits. 
-    // Namespace 'rdrp-sna' matches the project name.
-    fetch('https://api.counterapi.dev/v2/rdrp-sna/pagess/up')
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.count) {
-                counterElement.textContent = data.count;
-            }
+    // Try external API first, fall back to localStorage
+    fetch('https://api.counterapi.dev/v2/rdrp-sna/pages/up', { mode: 'cors' })
+        .then(response => {
+            if (!response.ok) throw new Error('API error: ' + response.status);
+            return response.json();
         })
-        .catch(err => console.error('Visit counter failed:', err));
+        .then(data => {
+            console.log('Counter API success:', data);
+            const count = data.value || data.count || '?';
+            counterElement.textContent = count;
+        })
+        .catch(err => {
+            console.log('Counter API failed, using localStorage fallback:', err.message);
+            // Fallback: use localStorage counter
+            let visits = parseInt(localStorage.getItem('pageVisits') || '0', 10) + 1;
+            localStorage.setItem('pageVisits', visits);
+            counterElement.textContent = visits;
+            console.log('Local visit count:', visits);
+        });
 }
 
 function formatCalcValue(value) {
